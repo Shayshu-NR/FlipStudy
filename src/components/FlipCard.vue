@@ -8,7 +8,7 @@ import { VueFlip } from 'vue-flip';
 
 export default
   {
-    name: 'Home',
+    name: 'Flip',
     props: {
       cardData: Object
     }

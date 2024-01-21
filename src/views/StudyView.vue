@@ -134,6 +134,11 @@ export default
         }
       },
       resetTimer() {
+        if (this.interval != null) {
+          clearInterval(this.interval);
+          this.time = '00:00'
+        }
+
         this.startTime = Date.now();
 
         this.interval = setInterval(() => {
@@ -158,6 +163,13 @@ export default
         }
         return minutes + ":" + secondes;
 
+      },
+      restart() {
+        this.resetTimer();
+        this.questionCounter = 0;
+        this.triggerNextCard = false;
+
+        this.setData.cards.forEach(x => { x.gotCorrect = null });
       }
     },
     components: {
@@ -194,11 +206,11 @@ export default
               </p>
             </div>
 
-            <br>
 
             <!--Settings-->
             <div>
-              <button type="button" class="rounded p-2 shadow-sm border m-2" style="background: #FBF9F1;">
+              <button type="button" class="rounded p-2 shadow-sm border m-2" style="background: #FBF9F1;"
+                @click="this.restart">
                 <ArrowCounterClockwise class="fill-black w-6 h-6" />
               </button>
 
@@ -217,7 +229,6 @@ export default
           <div class="w-full h-6 mb-4 bg-gray-200 rounded-full">
             <div class="h-6 rounded-full slow-smooth text-center" style="background: #AAD7D9;"
               :style="{ width: 100 * (this.questionCounter / this.setData.cards.length) + '%' }">
-
             </div>
           </div>
 
