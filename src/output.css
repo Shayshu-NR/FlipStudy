@@ -576,6 +576,10 @@ video {
   margin: 1rem;
 }
 
+.m-auto {
+  margin: auto;
+}
+
 .mx-2 {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -616,6 +620,14 @@ video {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.-mb-96 {
+  margin-bottom: -24rem;
+}
+
+.mb-16 {
+  margin-bottom: 4rem;
 }
 
 .block {
@@ -675,6 +687,34 @@ video {
   height: 100%;
 }
 
+.h-screen {
+  height: 100vh;
+}
+
+.min-h-16 {
+  min-height: 4rem;
+}
+
+.min-h-32 {
+  min-height: 8rem;
+}
+
+.min-h-48 {
+  min-height: 12rem;
+}
+
+.min-h-72 {
+  min-height: 18rem;
+}
+
+.min-h-60 {
+  min-height: 15rem;
+}
+
+.min-h-20 {
+  min-height: 5rem;
+}
+
 .w-1\/2 {
   width: 50%;
 }
@@ -719,6 +759,10 @@ video {
   max-width: 24rem;
 }
 
+.max-w-32 {
+  max-width: 8rem;
+}
+
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -735,8 +779,16 @@ video {
   flex-wrap: wrap;
 }
 
+.content-normal {
+  align-content: normal;
+}
+
 .content-center {
   align-content: center;
+}
+
+.content-between {
+  align-content: space-between;
 }
 
 .items-center {
@@ -1018,6 +1070,10 @@ video {
 
 .marker\:m-2::marker {
   margin: 0.5rem;
+}
+
+.hover\:cursor-grab:hover {
+  cursor: grab;
 }
 
 .hover\:bg-gray-100:hover {

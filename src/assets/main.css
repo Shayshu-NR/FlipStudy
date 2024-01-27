@@ -498,3 +498,7 @@ fieldset[disabled] .multiselect {
     transform: rotate(2turn);
   }
 }
+
+.front {
+  position : relative !important;
+}
