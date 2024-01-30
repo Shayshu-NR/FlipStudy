@@ -7,9 +7,10 @@ export default
     {
         name: 'Create',
         props: {
-            cardData: Object
-        }
-        ,
+            titleText : String,
+            bodyText : String
+        },
+        emits : ['update:titleText', 'update:bodyText', 'flipCard'], 
         setup() {
             const store = useStore();
             return { store };
@@ -18,19 +19,19 @@ export default
         },
         data() {
             return {
-                titleText: "",
-                bodyText: ""
             }
         },
-        methods: {
+        computed: {
+            value : {
+                get() {
+                    return 
+                }
+            }
         },
         components: {
             ArrowLeftRight,
             Floppy
         },
-        watch: {
-
-        }
     }
 </script>
 
@@ -43,7 +44,8 @@ export default
                 </label>
                 <input ref="front-title" id="front-title" type="text" placeholder="Title..."
                     class="w-full p-1 rounded bg-gray-100 border-slate-400 border border-opacity-10"
-                    v-model="this.titleText" />
+                    :value="this.titleText" 
+                    @input="this.$emit('update:titleText', $event.target.value)"/>
             </div>
 
             <div class="mb-4">
@@ -51,7 +53,8 @@ export default
                     Front Card Text
                 </label>
                 <textarea ref="front-text" id="front-text" class="w-full rounded-lg bg-gray-100 p-2"
-                    v-model="this.bodyText">
+                    :value="this.bodyText" 
+                    @input="this.$emit('update:bodyText', $event.target.value)">
                 </textarea>
             </div>
 

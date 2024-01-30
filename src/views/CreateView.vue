@@ -30,15 +30,22 @@ export default
                     setDescription: "",
                     cards:
                         [
-
+                            {
+                                questionID: 0,
+                                flip: false,
+                                front: {
+                                    title: "",
+                                    body: "",
+                                    tags: []
+                                },
+                                back: {
+                                    title: "",
+                                    body: "",
+                                    tags: []
+                                }
+                            }
                         ],
                 },
-                cards: [
-                    {
-                        id: 0,
-                        flip : false
-                    }
-                ],
                 cardCount: 1,
                 flip: false,
                 drag: false,
@@ -54,23 +61,47 @@ export default
                 this.value.push(tag)
             },
             addCard() {
-                this.cards.push({
-                    id: this.cardCount,
-                    flip : false,
+                this.setData.cards.push({
+                    questionID: this.cardCount,
+                    flip: false,
+                    front: {
+                        title: "",
+                        body: "",
+                        tags: []
+                    },
+                    back: {
+                        title: "",
+                        body: "",
+                        tags: []
+                    }
                 });
                 this.cardCount++;
-
             },
-            cardHeight() {
-                // let h = []
-            //    window.document.getElementsByClassName("back").forEach(x => h.push(x.clientHeight));
-            console.log(this.$refs);
-                // return h.reduce((a, b) => Math.max(a, b), -Infinity);
+            flipEditCard(element) {
+                let foundCard = this.setData.cards.find(x => x.questionID == element.questionID);
+                foundCard.flip = !foundCard.flip;
+            },
+            exportStudy() {
+                const regex = /[^A-Za-z0-9]/g;
+                this.setData.setID = this.setData.setName.replace(regex, "").toLowerCase();
+
+                const json = this.setData;
+
+                const data = JSON.stringify(json);
+
+                const blob = new Blob([data], { type: "application/json" });
+                const jsonObjectUrl = URL.createObjectURL(blob);
+
+                const filename = `${this.setData.setName}.json`;
+                const anchorEl = document.createElement("a");
+                anchorEl.href = jsonObjectUrl;
+                anchorEl.download = filename;
+
+                anchorEl.click();
+
+                URL.revokeObjectURL(jsonObjectUrl);
             }
         },
-        computed : {
-            
-        },  
         components: {
             EditCardBack,
             EditCardFront,
@@ -89,18 +120,24 @@ export default
 
 
 <template>
-    {{  this.cardHeight() }}
+    {{ this.setData }}
     <main>
         <div class="h-100 w-100 mb-16">
-            <Draggable v-model="this.cards" @start="this.drag = true" @end="this.drag = false" item-key="id" class="grid grid-cols-3 m-4 p-4">
+            <Draggable v-model="this.setData.cards" @start="this.drag = true" @end="this.drag = false" item-key="questionID"
+                class="grid grid-cols-3 m-4 p-4">
                 <template #item="{ element }">
-                    <VueFlip v-model="this.cards.find(x => x.id == element.id).flip" class="min-h-16 hover:cursor-grab" height="22rem" width="100">
+                    <VueFlip v-model="this.setData.cards.find(x => x.questionID == element.questionID).flip"
+                        class="min-h-16 hover:cursor-grab" height="22rem" width="100%">
                         <template v-slot:front>
-                            <EditCardFront :ref="'f_item' + element.id" @flip-card="(e) => { this.cards.find(x => x.id == element.id).flip = !this.cards.find(x => x.id == element.id).flip; }" />
+                            <EditCardFront :ref="'f_item' + element.questionID"
+                                @flip-card="(e) => { this.flipEditCard(element); }" v-model:titleText="element.front.title"
+                                v-model:bodyText="element.front.body" />
                         </template>
 
                         <template v-slot:back>
-                            <EditCardBack :ref="'b_item' + element.id" @flip-card="(e) => { this.cards.find(x => x.id == element.id).flip = !this.cards.find(x => x.id == element.id).flip; }" />
+                            <EditCardBack :ref="'b_item' + element.id" @flip-card="(e) => { flipEditCard(element); }"
+                                v-model:titleText="element.back.title" v-model:bodyText="element.back.body"
+                                v-model:tags="element.back.tags" />
                         </template>
                     </VueFlip>
                 </template>
@@ -111,15 +148,16 @@ export default
                 <label for="back-title" class="block mb-2 text-sm font-medium text-gray-900">
                     Study Set Name
                 </label>
-                <input  type="text" placeholder="Set Name"
-                    class="w-full p-1 rounded bg-gray-100 border-slate-400 border border-opacity-10" />
+                <input type="text" placeholder="Set Name"
+                    class="w-full p-1 rounded bg-gray-100 border-slate-400 border border-opacity-10"
+                    v-model="this.setData.setName" />
             </div>
 
             <div class="mb-4">
                 <label for="back-text" class="block mb-2 text-sm font-medium text-gray-900">
                     Description
                 </label>
-                <textarea class="w-full rounded-lg bg-gray-100 p-2">
+                <textarea class="w-full rounded-lg bg-gray-100 p-2" v-model="this.setData.setDescription">
 
                 </textarea>
             </div>
@@ -129,8 +167,8 @@ export default
                     @click="this.addCard">
                     <Plus />
                 </button>
-    
-                <button type="button" class="rounded p-2 m-2 text-center shadow-sm border" style="background: #FBF9F1;">
+
+                <button type="button" class="rounded p-2 m-2 text-center shadow-sm border" style="background: #FBF9F1;" @click="this.exportStudy">
                     <Floppy />
                 </button>
             </div>
