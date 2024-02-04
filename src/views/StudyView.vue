@@ -18,7 +18,7 @@ export default
       return { store };
     },
     mounted() {
-      this.resetTimer();
+      this.restart();
     },
     data() {
       return {
@@ -100,12 +100,15 @@ export default
     },
     methods: {
       answerQuestion(rightWrong) {
-        this.setData.cards[this.questionCounter].gotCorrect = rightWrong;
+        this.store.setData.cards[this.questionCounter].gotCorrect = rightWrong;
+        this.store.setData.cards[this.questionCounter].endTime = Date.now();
         this.questionResponse = rightWrong;
 
-        if (this.questionCounter == this.setData.cards.length - 1) {
+        if (this.questionCounter == this.store.setData.cards.length - 1) {
+          console.log(this.store.setData)
           this.questionCounter++;
           this.triggerNextCard = true;
+          clearInterval(this.interval);
           setTimeout(() => {
 
             this.setFinished = true;
@@ -129,6 +132,7 @@ export default
           this.triggerNextCard = true;
           setTimeout(() => {
             this.questionCounter++;
+            this.store.setData.cards[this.questionCounter].startTime = Date.now();
             this.triggerNextCard = false;
           }, 1000);
         }
@@ -168,8 +172,13 @@ export default
         this.resetTimer();
         this.questionCounter = 0;
         this.triggerNextCard = false;
+        this.setFinished = false;
+        this.store.setData.cards.forEach(x => { x.gotCorrect = null; x.startTime = null; x.endTime = null; x.flip = false; });
 
-        this.setData.cards.forEach(x => { x.gotCorrect = null });
+        if (this.store.setData.cards.length > 0) {
+
+          this.store.setData.cards[this.questionCounter].startTime = Date.now();
+        }
       }
     },
     components: {
@@ -192,6 +201,7 @@ export default
 </script>
 
 <template>
+  {{ this.store.setData }}
   <main>
     <div class="m-4 p-4">
       <div class="flex flex-row m-2 p-2">
@@ -200,23 +210,23 @@ export default
             class="m-2 min-w-10 h-full rounded overflow-hidden border-slate-500 border border-opacity-20 p-2 bg-stone-50 shadow-md flex flex-col justify-between">
             <!--Set Name-->
             <div>
-              <h1 class="text-lg">{{ this.setData.setName }}</h1>
+              <h1 class="text-lg">{{ this.store.setData.setName }}</h1>
               <p>
-                {{ this.setData.setDescription }}
+                {{ this.store.setData.setDescription }}
               </p>
             </div>
 
 
             <!--Settings-->
-            <div>
+            <div class="flex">
               <button type="button" class="rounded p-2 shadow-sm border m-2" style="background: #FBF9F1;"
                 @click="this.restart">
                 <ArrowCounterClockwise class="fill-black w-6 h-6" />
               </button>
 
-              <button type="button" class="rounded p-2 shadow-sm border marker:m-2" style="background: #FBF9F1;">
+              <router-link type="button" class="rounded p-2 shadow-sm border m-2" style="background: #FBF9F1;" to="/edit">
                 <PencilSquare class="fill-black w-6 h-6" />
-              </button>
+              </router-link>
             </div>
           </div>
         </div>
@@ -228,7 +238,7 @@ export default
           <!--Progress bar-->
           <div class="w-full h-6 mb-4 bg-gray-200 rounded-full">
             <div class="h-6 rounded-full slow-smooth text-center" style="background: #AAD7D9;"
-              :style="{ width: 100 * (this.questionCounter / this.setData.cards.length) + '%' }">
+              :style="{ width: 100 * (this.questionCounter / this.store.setData.cards.length) + '%' }">
             </div>
           </div>
 
@@ -241,7 +251,8 @@ export default
                   <CheckCircle class="size-10 m-2 fill-green-600" />
                 </div>
                 <div class="mx-2 text-center content-center grid">
-                  <strong> {{ this.setData.cards.map(x => x.gotCorrect).filter(x => x && x != null).length }}</strong>
+                  <strong> {{ this.store.setData.cards.map(x => x.gotCorrect).filter(x => x && x != null).length
+                  }}</strong>
                 </div>
               </div>
               <div class="flex flex-row align-middle">
@@ -249,7 +260,8 @@ export default
                   <XCircle class="size-10 m-2 fill-red-600" />
                 </div>
                 <div class="mx-2 text-center content-center grid">
-                  <strong> {{ this.setData.cards.map(x => x.gotCorrect).filter(x => !x && x != null).length }}</strong>
+                  <strong> {{ this.store.setData.cards.map(x => x.gotCorrect).filter(x => !x && x != null).length
+                  }}</strong>
                 </div>
               </div>
             </div>
@@ -257,7 +269,7 @@ export default
             <!--Total card progress-->
             <div>
               <CardLogo class="w-20 h-20" />
-              <strong>{{ this.questionCounter }} / {{ this.setData.cards.length }}</strong>
+              <strong>{{ this.questionCounter }} / {{ this.store.setData.cards.length }}</strong>
             </div>
           </div>
         </div>
@@ -265,9 +277,10 @@ export default
     </div>
     <div class="w-full flex justify-between" style="min-height: 25vh;">
       <div class="w-full flex justify-between smooth">
-        <div class="w-full flex justify-between smooth" v-if="!this.setFinished">
+        <div class="w-full flex justify-between smooth"
+          v-if="!this.setFinished && this.store.setData.cards.length > 0 && this.questionCounter < this.store.setData.cards.length">
           <CrossButton @click="this.answerQuestion(false)" :disabled="this.triggerNextCard" />
-          <FlipCard :cardData="this.setData.cards[this.questionCounter]" :class="{
+          <FlipCard :cardData="this.store.setData.cards[this.questionCounter]" :class="{
             'animate-swipe-out-correct': (this.triggerNextCard && this.questionResponse),
             'animate-swipe-out-wrong': (this.triggerNextCard && !this.questionResponse),
             'animate-swipe-in': !this.triggerNextCard
@@ -277,10 +290,10 @@ export default
       </div>
       <div class="w-full flex justify-between smooth" v-if="this.setFinished">
         <p>
-          Correct: {{ this.setData.cards.map(x => x.gotCorrect).filter(x => x).length }}
+          Correct: {{ this.store.setData.cards.map(x => x.gotCorrect).filter(x => x).length }}
         </p>
         <p>
-          Wrong: {{ this.setData.cards.map(x => x.gotCorrect).filter(x => !x).length }}
+          Wrong: {{ this.store.setData.cards.map(x => x.gotCorrect).filter(x => !x).length }}
         </p>
       </div>
     </div>

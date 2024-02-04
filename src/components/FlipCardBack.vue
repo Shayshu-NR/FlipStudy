@@ -59,7 +59,7 @@ export default
         <div class="px-6 pt-4 pb-2">
             <span class="inline-block rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2" :style="{'background-color' : this.getRandomPastel()}"
                 v-for="t in this.tags">
-                #{{ t.tagName }}
+                #{{ t.name }}
             </span>
         </div>
     </div>

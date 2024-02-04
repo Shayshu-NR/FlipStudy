@@ -6,6 +6,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import VueConfetti from 'vue-confetti';
+import 'highlight.js/styles/stackoverflow-light.css'
+
 
 const app = createApp(App)
 
