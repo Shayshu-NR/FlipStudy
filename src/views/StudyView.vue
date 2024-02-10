@@ -8,6 +8,7 @@ import CheckCircle from '@/components/icons/CheckCircle.vue';
 import XCircle from '@/components/icons/XCircle.vue';
 import ArrowCounterClockwise from '@/components/icons/ArrowCounterClockwise.vue';
 import PencilSquare from '@/components/icons/PencilSquare.vue';
+import Summary from '@/components/Summary.vue';
 
 export default
   {
@@ -22,72 +23,6 @@ export default
     },
     data() {
       return {
-        setData: {
-          setID: "",
-          setName: "This is a study set",
-          setDescription: "Some set description",
-          cards:
-            [
-              {
-                "questionID": 0,
-                "setID": "",
-                "front": {
-                  title: "Front Flip",
-                  body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.",
-                  tags: [
-                    {
-                      tagName: "math"
-                    },
-                    {
-                      tagName: "calculus"
-                    }
-                  ]
-                },
-                "back": {
-                  title: "Back Flip",
-                  body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.",
-                  tags: [
-                    {
-                      tagName: "math"
-                    },
-                    {
-                      tagName: "calculus"
-                    }
-                  ]
-                },
-                "gotCorrect": null
-              },
-              {
-                "questionID": 1,
-                "setID": "",
-                "front": {
-                  title: "Next card",
-                  body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.",
-                  tags: [
-                    {
-                      tagName: "math"
-                    },
-                    {
-                      tagName: "calculus"
-                    }
-                  ]
-                },
-                "back": {
-                  title: "Back Flip",
-                  body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.",
-                  tags: [
-                    {
-                      tagName: "math"
-                    },
-                    {
-                      tagName: "calculus"
-                    }
-                  ]
-                },
-                "gotCorrect": null
-              }
-            ],
-        },
         questionCounter: 0,
         setFinished: false,
         triggerNextCard: false,
@@ -189,7 +124,8 @@ export default
       CheckCircle,
       XCircle,
       ArrowCounterClockwise,
-      PencilSquare
+      PencilSquare,
+      Summary
     },
     watch: {
 
@@ -201,8 +137,7 @@ export default
 </script>
 
 <template>
-  {{ this.store.setData }}
-  <main>
+  <div>
     <div class="m-4 p-4">
       <div class="flex flex-row m-2 p-2">
         <div class="flex flex-col w-1/2">
@@ -275,10 +210,9 @@ export default
         </div>
       </div>
     </div>
-    <div class="w-full flex justify-between" style="min-height: 25vh;">
+    <div class="w-full flex justify-between" style="min-height: 25vh;"  v-if="!this.setFinished && this.store.setData.cards.length > 0 && this.questionCounter < this.store.setData.cards.length">
       <div class="w-full flex justify-between smooth">
-        <div class="w-full flex justify-between smooth"
-          v-if="!this.setFinished && this.store.setData.cards.length > 0 && this.questionCounter < this.store.setData.cards.length">
+        <div class="w-full flex justify-between smooth">
           <CrossButton @click="this.answerQuestion(false)" :disabled="this.triggerNextCard" />
           <FlipCard :cardData="this.store.setData.cards[this.questionCounter]" :class="{
             'animate-swipe-out-correct': (this.triggerNextCard && this.questionResponse),
@@ -288,14 +222,9 @@ export default
           <CheckBoxButton @click="this.answerQuestion(true)" :disabled="this.triggerNextCard" />
         </div>
       </div>
-      <div class="w-full flex justify-between smooth" v-if="this.setFinished">
-        <p>
-          Correct: {{ this.store.setData.cards.map(x => x.gotCorrect).filter(x => x).length }}
-        </p>
-        <p>
-          Wrong: {{ this.store.setData.cards.map(x => x.gotCorrect).filter(x => !x).length }}
-        </p>
-      </div>
     </div>
-  </main>
+    <div class="w-full flex justify-between smooth" v-if="this.setFinished">
+      <Summary />
+    </div>
+  </div>
 </template>

@@ -1,5 +1,5 @@
 <script>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import PageHeader from './components/PageHeader.vue';
 
 export default {
@@ -19,7 +19,11 @@ export default {
 
 <template>
   <PageHeader></PageHeader>
-  <div class="h-full">
-    <RouterView />
-  </div>
+  <main class="h-full">
+    <RouterView v-slot="{Component}">
+      <!-- <Transition name="slide-right"> -->
+        <component :is="Component"/>
+      <!-- </Transition> -->
+    </RouterView>
+  </main>
 </template>

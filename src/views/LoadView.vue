@@ -85,7 +85,7 @@ export default
 
 
 <template>
-    <main>
+    <div>
         <div class="rounded-lg shadow-lg bg-stone-50 m-3 p-2 min-h-20 content-normal flex flex-col">
             <p>
                 Load in a previously saved study set in the form of a JSON file.
@@ -112,5 +112,5 @@ export default
                 <span class="font-medium">{{  this.uploadSuccess }}</span> 
             </div>
         </div>
-    </main>
+    </div>
 </template>

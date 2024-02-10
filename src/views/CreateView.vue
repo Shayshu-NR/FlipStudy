@@ -13,7 +13,10 @@ export default
     {
         name: 'Create',
         props: {
-            cardData: Object
+            loadData: {
+                type: Boolean,
+                default: false
+            }
         }
         ,
         setup() {
@@ -21,12 +24,34 @@ export default
             return { store };
         },
         mounted() {
+            if (this.loadData != null && this.loadData != undefined && this.loadData) {
+                this.loadSet(this.loadData);
+            } else {
+                this.setData = {
+                    setID: "",
+                    setName: "",
+                    setDescription: "",
+                    cards:
+                        [
+
+                        ],
+                }
+            }
         },
         data() {
             return {
                 cardCount: 1,
                 flip: false,
                 drag: false,
+                setData: {
+                    setID: "",
+                    setName: "",
+                    setDescription: "",
+                    cards:
+                        [
+
+                        ],
+                },
             }
         },
         methods: {
@@ -39,7 +64,7 @@ export default
                 this.value.push(tag)
             },
             addCard() {
-                this.store.setData.cards.push({
+                this.setData.cards.push({
                     questionID: this.cardCount,
                     flip: false,
                     front: {
@@ -56,14 +81,14 @@ export default
                 this.cardCount++;
             },
             flipEditCard(element) {
-                let foundCard = this.store.setData.cards.find(x => x.questionID == element.questionID);
+                let foundCard = this.setData.cards.find(x => x.questionID == element.questionID);
                 foundCard.flip = !foundCard.flip;
             },
             exportStudy() {
                 const regex = /[^A-Za-z0-9]/g;
-                this.store.setData.setID = this.store.setData.setName.replace(regex, "").toLowerCase();
+                this.setData.setID = this.setData.setName.replace(regex, "").toLowerCase();
 
-                const json = this.store.setData;
+                const json = this.setData;
                 json.cards.forEach(x => x.flip = false);
 
                 const data = JSON.stringify(json);
@@ -71,7 +96,7 @@ export default
                 const blob = new Blob([data], { type: "application/json" });
                 const jsonObjectUrl = URL.createObjectURL(blob);
 
-                const filename = `${this.store.setData.setName}.json`;
+                const filename = `${this.setData.setName}.json`;
                 const anchorEl = document.createElement("a");
                 anchorEl.href = jsonObjectUrl;
                 anchorEl.download = filename;
@@ -79,6 +104,10 @@ export default
                 anchorEl.click();
 
                 URL.revokeObjectURL(jsonObjectUrl);
+            },
+            loadSet(data) {
+                // Construct all the data...
+                this.setData = this.store.setData;
             }
         },
         components: {
@@ -92,14 +121,16 @@ export default
             Draggable,
         },
         watch: {
-
+            'this.$route'(to, from) {
+                console.log(to, from);
+            }
         }
     }
 </script>
 
 
 <template>
-    <main>
+    <div>
         <div class="rounded-lg shadow-lg bg-stone-50 m-4 p-2 min-h-20 content-normal flex flex-col">
             <div class="mb-4">
                 <label for="back-title" class="block mb-2 text-sm font-medium text-gray-900">
@@ -107,14 +138,14 @@ export default
                 </label>
                 <input type="text" placeholder="Set Name"
                     class="w-full p-1 rounded bg-gray-100 border-slate-400 border border-opacity-10"
-                    v-model="this.store.setData.setName" />
+                    v-model="this.setData.setName" />
             </div>
 
             <div class="mb-4">
                 <label for="back-text" class="block mb-2 text-sm font-medium text-gray-900">
                     Description
                 </label>
-                <textarea class="w-full rounded-lg bg-gray-100 p-2" v-model="this.store.setData.setDescription">
+                <textarea class="w-full rounded-lg bg-gray-100 p-2" v-model="this.setData.setDescription">
 
                 </textarea>
             </div>
@@ -125,17 +156,18 @@ export default
                     <Plus />
                 </button>
 
-                <button type="button" class="rounded p-2 m-2 text-center shadow-sm border" style="background: #FBF9F1;" @click="this.exportStudy">
+                <button type="button" class="rounded p-2 m-2 text-center shadow-sm border" style="background: #FBF9F1;"
+                    @click="this.exportStudy">
                     <Floppy />
                 </button>
             </div>
 
         </div>
         <div class="h-100 w-100 mb-16">
-            <Draggable v-model="this.store.setData.cards" @start="this.drag = true" @end="this.drag = false" item-key="questionID"
+            <Draggable v-model="this.setData.cards" @start="this.drag = true" @end="this.drag = false" item-key="questionID"
                 class="grid grid-cols-3 m-4 p-4">
                 <template #item="{ element }">
-                    <VueFlip v-model="this.store.setData.cards.find(x => x.questionID == element.questionID).flip"
+                    <VueFlip v-model="this.setData.cards.find(x => x.questionID == element.questionID).flip"
                         class="min-h-16 hover:cursor-grab" height="22rem" width="100%">
                         <template v-slot:front>
                             <EditCardFront :ref="'f_item' + element.questionID"
@@ -152,5 +184,5 @@ export default
                 </template>
             </Draggable>
         </div>
-    </main>
+    </div>
 </template>

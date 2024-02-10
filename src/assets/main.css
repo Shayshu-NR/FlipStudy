@@ -29,6 +29,19 @@
   transition: all 1s ease-in-out;
 }
 
+.slide-right-enter-active {
+  transition: all 0.3s ease-out;
+}
+.slide-right-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
 @keyframes card-swipe-out-correct {
   0% {
     transform: translate(0rem, 0rem) rotate(0deg);
@@ -123,7 +136,7 @@ fieldset[disabled] .multiselect {
   height: 16px;
   border-radius: 100%;
   border: 2px solid transparent;
-  border-top-color: #99BC85;
+  border-top-color: #99bc85;
   box-shadow: 0 0 0 1px transparent;
 }
 .multiselect__spinner:before {
@@ -249,7 +262,7 @@ fieldset[disabled] .multiselect {
   margin-right: 10px;
   color: #fff;
   line-height: 1;
-  background: #99BC85;
+  background: #99bc85;
   margin-bottom: 5px;
   white-space: nowrap;
   overflow: hidden;
@@ -390,13 +403,13 @@ fieldset[disabled] .multiselect {
   font-size: 13px;
 }
 .multiselect__option--highlight {
-  background: #99BC85;
+  background: #99bc85;
   outline: none;
   color: #fff;
 }
 .multiselect__option--highlight:after {
   content: attr(data-select);
-  background: #99BC85;
+  background: #99bc85;
   color: #fff;
 }
 .multiselect__option--selected {
@@ -409,11 +422,11 @@ fieldset[disabled] .multiselect {
   color: silver;
 }
 .multiselect__option--selected.multiselect__option--highlight {
-  background: #DC8686;
+  background: #dc8686;
   color: #fff;
 }
 .multiselect__option--selected.multiselect__option--highlight:after {
-  background: #DC8686;
+  background: #dc8686;
   content: attr(data-deselect);
   color: #fff;
 }
@@ -443,11 +456,11 @@ fieldset[disabled] .multiselect {
   background: #dedede;
 }
 .multiselect__option--group-selected.multiselect__option--highlight {
-  background: #DC8686;
+  background: #dc8686;
   color: #fff;
 }
 .multiselect__option--group-selected.multiselect__option--highlight:after {
-  background: #DC8686;
+  background: #dc8686;
   content: attr(data-deselect);
   color: #fff;
 }
@@ -500,5 +513,5 @@ fieldset[disabled] .multiselect {
 }
 
 .front {
-  position : relative !important;
+  position: relative !important;
 }
